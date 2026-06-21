@@ -1,0 +1,805 @@
+/* LIGHT MODE */
+
+body {
+  font-family: Arial, sans-serif !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+}
+
+/* Form container */
+.form-container {
+  padding: 8px 20px 12px;
+  border-radius: 8px;
+  max-width: 980px;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+#reportTitle {
+  color: #4da6ff !important;
+  /* Override the color for dark mode */
+  background: transparent !important;
+}
+
+/* Buttons */
+/*
+button,
+.btn,
+.uiButton,
+.uiButton:link,
+.uiButton:visited,
+#saveFolderButton,
+#cancelFolderButton {
+  border-radius: 5px;
+  transition: background 0.2s ease-in-out;
+  border: 1px solid #444 !important;
+}
+*/
+
+#saveFolderButton,
+#cancelFolderButton {
+  padding: 5px 7px;
+  font-weight: bold;
+}
+
+#saveFolderButton {
+  color: #7fbfff !important;
+  border-color: #2f3b4a !important;
+}
+
+#cancelFolderButton {
+  color: #ffffff !important;
+}
+
+/* Labels */
+label {
+  color: #1884ff !important;
+  font-weight: bold;
+  display: block;
+}
+
+/* Table container and table */
+.table-container,
+table {
+  border-collapse: collapse;
+}
+
+/* Headers */
+th {
+  color: #6db6ff !important;
+  background-color: #0169d2 !important;
+  border: 1px solid #444 !important;
+  font-weight: bold;
+}
+
+/* Table cells */
+td {
+  border: 1px solid #444;
+}
+
+td[contenteditable="true"] {
+  color: white;
+}
+
+/* File/directory names */
+td[data-label="Name"] {
+  font-weight: bold;
+  color: #ffffff !important;
+}
+
+.editableCell {
+  color: white;
+  background-color: transparent;
+}
+
+.add-column-button {
+  color: #4da6ff;
+}
+
+.top-bar a {
+  color: #007bff;
+}
+
+.loading-text {
+  color: #4da6ff;
+}
+
+.btn-link {
+  color: #007bff;
+}
+
+.go-projects-link {
+  color: #007bff;
+}
+
+.no-files-message {
+  color: #666;
+}
+
+.add-row-button {
+  color: green;
+}
+
+.save-button {
+  color: #fff;
+}
+
+.status-message {
+  color: darkred;
+}
+
+html.ios td[data-label="Name"].folder-item {
+  color: #1060c9 !important;
+}
+
+#passwordSection {
+  background-color: #e8e8e8 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  color: darkblue;
+}
+
+#passwordLabel {
+  color: black !important;
+}
+
+/* Footer */
+.page-footer {
+  color: #aaa;
+  border-top: 1px solid #444;
+  text-align: center;
+}
+
+.page-footer a {
+  color: #63b3ed;
+}
+
+/* Document editor */
+#documentEditor {
+  color: black !important;
+}
+
+/* Modals */
+.modal,
+.modal-content,
+#newFolderModal {
+  border: 1px solid #444 !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8) !important;
+}
+
+.bw-modal {
+  background-color: white;
+  border: 1px solid #444 !important;
+}
+
+/* New folder input */
+#newFolderInput,
+#eventReportName,
+#renameInput {
+  border: 1px solid #444 !important;
+}
+
+.modal-content {
+  background: white;
+}
+
+#savingOverlay {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#eventReportName::placeholder {
+  color: #7f7f7f !important;
+}
+
+/* === Specific Fixes for eventReportPage.php === */
+h1 {
+  color: #4da6ff !important;
+}
+
+#eventName,
+#eventDate,
+#status,
+#affectedSystems,
+#description {
+  color: #000000 !important;
+}
+
+#eventDate::placeholder,
+#status {
+  color: #bbbbbb !important;
+}
+
+select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+select option {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+#eventName::placeholder,
+#affectedSystems::placeholder,
+#description::placeholder {
+  color: #888888 !important;
+}
+
+#status:focus {
+  color: #ffffff !important;
+}
+
+.action-buttons button {
+  background-color: #cacaca;
+  color: #fff;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    /* soft top light */
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+    /* subtle bottom shadow */
+    1px 1px 3px rgba(0, 0, 0, 0.3);
+  /* outer shadow */
+}
+
+.zoom-btn,
+#reduceNewlinesBtn {
+  background-color: #e7e7e7;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#reduceNewlinesBtn {
+  color: black;
+}
+
+.navigate-up-btn {
+  background-color: #e0e0e0;
+  /* light grey */
+  color: #000;
+  /* keep text black for contrast */
+  border: 1px solid #bbb;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.navigate-up-btn:hover {
+  background-color: #d5d5d5;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.7),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.15);
+}
+
+#homeIcon {
+  content: url("./siteImages/homeIcon.png");
+}
+
+#saveFolderButton {
+  color: white !important;
+}
+
+.modal-control-btn {
+  background-color: #4da6ff !important;
+  color: white !important;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s;
+}
+
+.modal-control-btn:hover {
+  background-color: #3c8ddb !important;
+}
+
+/* Stronger blue for Event Report input labels and title text */
+label {
+  color: #0411ff !important;
+}
+
+#reportTitle {
+  color: #0411ff !important;
+}
+
+@media (max-width: 486px) {
+  .table-container {
+    margin: 8px 5px 0px 5px !important;
+    padding: 0 0 12px !important;
+    border: none !important;
+    width: auto !important;
+    max-width: calc(100%-10px) !important;
+  }
+
+  table {
+    border: none !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  .folder-item-wrapper,
+  .file-item-wrapper {
+    border: none !important;
+  }
+
+  tbody tr {
+    border: none !important;
+  }
+
+  td {
+    border: 1px solid #555;
+    /* Softer border for dark mode */
+  }
+
+  .action-buttons button {
+    padding: 1px 8px;
+    font-size: 13px;
+    margin: 1px 0;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .action-buttons button:hover {
+    background-color: #666;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: flex-start;
+  }
+
+  th {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  td[data-label="Name"] {
+    font-weight: bold;
+  }
+
+  td.file-or-folder-cell {
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  td.file-or-folder-name {
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    /* <-- Add this if missing */
+    border: none;
+    /* <-- REMOVE outer border */
+  }
+
+  td {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  /* THIS ONE EFFECTS THE BORDERS!!! */
+  tbody td {
+    padding: 6px 12px 5px 12px !important;
+    margin: 0px !important;
+    /*border: none !important;*/
+    background: transparent !important;
+  }
+
+  tr.file-item-row {
+    border-radius: 0px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  tr.file-item-row td {
+    background: transparent !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  tr {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  tr.file-row {
+    border-radius: 0px;
+    overflow: hidden;
+    margin-bottom: 0px;
+  }
+
+  tr.folder-item-row {
+    border-radius: 0px;
+    margin-bottom: 0px;
+  }
+
+  .action-buttons {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  td {
+    padding-top: 4px !important;
+    margin-top: 0 !important;
+  }
+
+  td>.action-buttons {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  td {
+    background-color: transparent !important;
+  }
+
+  tbody tr {
+    /*border-bottom: 1px solid #ddd;*/
+    /* border: 1px solid #ccc; */
+    border: none !important;
+    /* ✅ Prevents stacking with td borders */
+
+    /* THIS IS THE ITEM CELL BACKGROUND THAT SPANS CELLS */
+  }
+
+  tr.file-row {
+    /*border: 1px solid #d4d4d4 !important;*/
+    border: none !important;
+    margin-bottom: -3px;
+    border: 1px solid white !important;
+    /* THIS IS AROUND THE WHOLE FILE ITEM */
+  }
+
+  table {
+    border-collapse: collapse !important;
+  }
+
+  #openModeContainer label {
+    position: relative;
+    top: 2px;
+  }
+}
+
+#openModeContainer {
+  padding-left: 6px !important;
+  /* 🔥 Tighter */
+  margin-left: 0px !important;
+}
+
+/* ///////SUPER///MARIO////BROS///////////////////////////////// */
+
+body {
+  font-family: "Helvetica Neue", sans-serif !important;
+  background: linear-gradient(135deg, #e3f2fd, #90caf9) no-repeat;
+  background: linear-gradient(135deg, #e9f5fd, #b9dffe) no-repeat;
+
+  /*min-height: 100vh;*/
+}
+
+.form-container {
+  background: #f8f8f8 !important;
+  /* Light grey for better contrast */
+  border-radius: 15px !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  /*max-width: 920px !important; 
+  margin: auto !important;
+  padding: 20px 30px !important;*/
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #444 !important;
+  border-radius: 8px !important;
+  border: none !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  background: rgb(255, 255, 255) !important;
+  color: black;
+}
+
+.submit-btn {
+  background: #0d47a1 !important;
+  border-radius: 8px !important;
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+}
+
+.submit-btn:hover {
+  background: #1976d2 !important;
+}
+
+/* Phase section styling */
+.phase-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: linear-gradient(to right,
+      #ffffff,
+      #f0f0f0);
+  /* Subtle white gradient */
+  border: 1px solid #ddd;
+  /* Soft grey border */
+  border-radius: 10px;
+  /* More rounded corners for modern look */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  /* Medium shadow for depth */
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 8px;
+  /* Rounded corners */
+  box-sizing: border-box;
+  /* Include padding in width calculation */
+}
+
+table {
+  border-spacing: 0px;
+  background-color: #f9f9f9;
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+  /* Subtle hover effect */
+}
+
+th,
+td,
+tr {
+  color: #333;
+  /* Dark text */
+  text-align: left;
+  /* Align text to the left */
+  border: 1px solid #ddd;
+  /* Default border */
+  word-wrap: break-word;
+  /* Prevent long text from overflowing */
+}
+
+.page-footer {
+  background-color: #f1f1f1;
+  color: #0d47a1;
+  font-family: "Helvetica Neue", sans-serif;
+  letter-spacing: 1.2px;
+  /*border-top: 2px solid #bbdefb;*/
+  box-shadow: 0 -3px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Target the actual modal box --- */
+.save-modal {
+  background-color: #ececec !important;
+}
+
+.folder-list-container {
+  background-color: #ffffff !important;
+}
+
+/* --- Drop shadows for buttons at bottom of save modal --- */
+.save-modal-button-group .btn {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  margin-bottom: 8px;
+}
+
+.rename-btn,
+.delete-btn,
+.move-btn {
+  background: linear-gradient(to top, #dbf7ff, #eceff0) !important;
+  transition: background-color 0.2s ease;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  border-color: #2d248c;
+}
+
+.rename-btn:hover,
+.delete-btn:hover {
+  background-color: #b9e2ff;
+  /* soft blue hover */
+}
+
+.save-modal-button-group .btn {
+  background: linear-gradient(to bottom, #e3f2fd, #d6eafc) !important;
+  color: #0d47a1 !important;
+  border: 1px solid #bbdefb;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.save-modal-button-group .btn:hover {
+  background: linear-gradient(to bottom, #d6eafc, #c9e3fb);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.18);
+}
+
+.save-modal-title {
+  color: #0d47a1 !important;
+  /* consistent strong blue */
+}
+
+.eventReportName {
+  margin-top: 16px !important;
+}
+
+#zoomControls button {
+  color: #0d47a1 !important;
+  /* strong blue */
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #cccccc !important;
+  /* light grey border */
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  background: rgb(255, 255, 255) !important;
+  color: black;
+}
+
+@media (max-width: 486px) {
+
+  .rename-btn,
+  .delete-btn {
+    background-color: #e1e1e1 !important;
+  }
+
+  .folder-row {
+    background: #f4f3f3;
+    box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.6),
+      inset -1px -2px 3px rgba(0, 0, 0, 0.244);
+    font-weight: 500;
+  }
+
+  .file-row {
+    background: #9ecfff;
+    box-shadow: inset 1px 1px 3px rgba(127, 118, 255, 0),
+      inset -3px -3px 3px rgba(4, 0, 59, 0.105);
+    /*font-weight: normal;*/
+    font-weight: 500;
+    color: white;
+  }
+
+  tr.file-body-row td:not(:first-child),
+  tr.file-body-row td[data-label="Created Date"],
+  tr.file-body-row td[data-label="Modified Date"],
+  tr.file-body-row td:last-child {
+    background-color: #d9e5ef !important;
+  }
+
+  tbody tr.file-row {
+    /* THIS IS THE ITEM CELL BACKGROUND THAT SPANS FILE CELLS */
+    background: linear-gradient(to bottom, #d6daec 1%, #20266c 70%, #d5d7df);
+    background: linear-gradient(to bottom, #d8dae6 1%, #e8e8e8 70%, #dfe0e3);
+    background: linear-gradient(to bottom, #d8dae6 1%, #e8e8e8 70%, #f2f2f4);
+    background: linear-gradient(to bottom, #e0e2ed 1%, #f2f2f2 70%, #f3f3f4);
+  }
+
+  tr.folder-row {
+    /* THIS IS THE ITEM CELL BACKGROUND THAT SPANS CELLS */
+    /*background: linear-gradient(168deg, #000000 78%, #2c2f3d);*/
+  }
+
+  td.file-row {
+    background: linear-gradient(4deg, #5c9fe1 25%, #7eb4e9 85%) !important;
+    border-bottom: 1px solid #d4d4d4 !important;
+    /* THIS IS THE FILE NAME CELL */
+  }
+
+  td.folder-row {
+    /*background: linear-gradient(45deg, #4d588f 45%, #dcdfe8 85%) !important;*/
+    /*background: linear-gradient(45deg, #c5c6c9 45%, #dcdfe8 85%) !important;*/
+    background: linear-gradient(45deg, #e4e5e7 20%, #dcdfe8 85%) !important;
+  }
+
+  .table-container {
+    border-radius: 0px !important;
+    padding-top: 8px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  table {
+    border-radius: 12px;
+  }
+}
+
+.openMode {
+  color: #000000 !important;
+}
+
+select,
+select option,
+select optgroup {
+  color: black !important;
+  background-color: white !important;
+}
+
+select {
+  color: black !important;
+  background-color: white !important;
+  -webkit-text-fill-color: black !important;
+  /* for Safari / Webkit */
+  -webkit-appearance: none !important;
+  /* strip default appearance */
+  appearance: none !important;
+}
+
+.phase-buttons button {
+  background-color: #d0d4d9 !important;
+  /* Light grey with slight blue tint (good for light mode) */
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease;
+}
+
+.phase-buttons button:hover {
+  background-color: #007bff !important;
+}
+
+.btn-cleanup,
+.phaseDeleteBtn {
+  background-color: #d0d4d9 !important;
+  color: black !important;
+}
+
+body.new-list-page {
+  background: linear-gradient(135deg, #dceefd, #b4d9f6) no-repeat;
+}
+
+/* Match link-style UI buttons to real buttons */
+.uiButton,
+.uiButton:link,
+.uiButton:visited {
+  background-color: #cacaca !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+  border-radius: 5px !important;
+  text-decoration: none !important;
+  padding: 5px 10px !important;
+  display: inline-block;
+  font-weight: 500;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    /* soft top light */
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+    /* subtle bottom shadow */
+    1px 1px 3px rgba(0, 0, 0, 0.3);
+  /* outer shadow */
+}
+
+
+/* Override link styles for .uiButton elements */
+a.uiButton,
+a.uiButton:link,
+a.uiButton:visited {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}

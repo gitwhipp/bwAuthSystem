@@ -1,0 +1,803 @@
+/* SUPER DARK MODE */
+/* 
+blue mist #4da6ff
+teal ice #2cc7b0
+lavender fog #b497ff
+hot pink #ff2da3
+bright orange #ff933a
+neon lime #bfff00
+*/
+
+body {
+  font-family: Arial, sans-serif !important;
+  background-color: #0b0b0b !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+}
+
+/* Form container */
+.form-container {
+  background: #121212 !important;
+  background: #181818 !important;
+  background: #1f1f1f !important;
+
+  padding: 8px 20px 12px;
+  border-radius: 8px;
+  max-width: 980px;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  background: #1a1a1a !important;
+  border: 1px solid #444 !important;
+  color: #ffffff !important;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+/* Buttons */
+/*
+button:not(#highlightColorBtn),
+.btn,
+#saveFolderButton,
+#cancelFolderButton,
+.uiButton,
+.uiButton:link,
+.uiButton:visited {
+  border-radius: 5px;
+  transition: background 0.2s ease-in-out;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #000;
+  text-decoration: none;
+}
+*/
+
+/* Hover state — match the classic MOVE button feel */
+/*
+button:not(#highlightColorBtn):hover,
+.btn:hover,
+.uiButton:hover,
+.uiButton:link:hover,
+.uiButton:visited:hover,
+#saveFolderButton:hover,
+#cancelFolderButton:hover {
+  background-color: #444;
+  color: #fff;
+  border-color: #555;
+  text-decoration: none;
+}
+*/
+
+#highlightSwatchWrap {
+    display: flex;
+    align-items: center;
+}
+
+#highlightColorBtn {
+  display: block;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #666 !important;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #3b82f6 !important;
+    background-color: #3b82f6 !important;
+    background-image: none !important;
+    color: transparent !important;
+    transition: none !important;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+#saveFolderButton,
+#cancelFolderButton {
+  padding: 5px 7px;
+  font-weight: bold;
+}
+
+#saveFolderButton {
+  background: #102a48 !important;
+  color: #4da6ff !important;
+  border-color: #2f3b4a !important;
+}
+
+#cancelFolderButton {
+  background: #222 !important;
+  color: #ffffff !important;
+}
+
+/* Labels */
+label {
+  color: #6dd5fa !important;
+  font-weight: bold;
+  display: block;
+}
+
+/* Table container and table */
+.table-container,
+table {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-collapse: collapse;
+}
+
+/* Headers */
+th {
+  background-color: #102a48 !important;
+  color: #4da6ff !important;
+  border: 1px solid #444 !important;
+  font-weight: bold;
+}
+
+/* Table cells */
+td {
+  background-color: #000 !important;
+  border: 1px solid #444;
+}
+
+td[contenteditable="true"] {
+  color: white;
+}
+
+/* Hover row */
+tr:hover {
+  background-color: #111 !important;
+}
+
+/* File/directory names */
+td[data-label="Name"] {
+  font-weight: bold;
+  color: #ffffff !important;
+}
+
+.editableCell {
+  color: white;
+  background-color: transparent;
+}
+
+.add-column-button {
+  color: #4da6ff;
+}
+
+.top-bar a {
+  color: #007bff;
+}
+
+.loading-text {
+  color: #4da6ff;
+}
+
+.btn-link {
+  color: #007bff;
+}
+
+.go-projects-link {
+  color: #007bff;
+}
+
+.no-files-message {
+  color: #666;
+}
+
+.add-row-button {
+  color: green;
+}
+
+/* Dark mode Save button – standout green */
+.save-button {
+  background: #90ee90 !important;
+  /* light green (like #90ee90 = lightgreen) */
+  color: #0b0b0b !important;
+  /* dark text */
+  font-weight: bold;
+  border: 1px solid #66cc66 !important;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.save-button:hover {
+  background: #7bd77b !important;
+  /* slightly darker green on hover */
+  color: #000 !important;
+}
+
+.status-message {
+  color: darkred;
+}
+
+html.ios td[data-label="Name"].folder-item {
+  color: #1060c9 !important;
+}
+
+/* Password section */
+#passwordSection {
+  background-color: #00397a !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Footer */
+.page-footer {
+  background-color: #102a48;
+  color: #aaa;
+  border-top: 1px solid #444;
+  text-align: center;
+}
+
+.page-footer a {
+  color: #63b3ed;
+}
+
+/* Document editor */
+#documentEditor {
+  background-color: #0e0e0e !important;
+  color: #ffffff !important;
+}
+
+/* Modals */
+.modal,
+.modal-content,
+#newFolderModal {
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.bw-modal {
+  background-color: black;
+  border: 1px solid #ffffff !important;
+}
+
+#newFolderModal,
+#modalPanel {
+  border: 1px solid #ffffff !important;
+  background-color: black;
+}
+
+/* New folder input */
+#newFolderInput,
+#eventReportName,
+#renameInput {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+.modal-content {
+  background: black;
+  border: 1px solid #ffffff !important;
+}
+
+#eventReportName::placeholder {
+  color: #7f7f7f !important;
+}
+
+/* === Specific Fixes for eventReportPage.php === */
+h1 {
+  color: #4da6ff !important;
+}
+
+#eventName,
+#eventDate,
+#status,
+#affectedSystems,
+#description {
+  color: #ffffff !important;
+}
+
+#eventDate::placeholder,
+#status {
+  color: #ffffff !important;
+}
+
+#eventName::placeholder,
+#affectedSystems::placeholder,
+#description::placeholder {
+  color: #888888 !important;
+}
+
+#status:focus {
+  color: #ffffff !important;
+}
+
+.zoom-btn,
+#reduceNewlinesBtn {
+  border: 1px solid #888 !important;
+  /* brighter border */
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+#homeIcon {
+  content: url("./siteImages/homeIconWhite.png");
+}
+
+/* Add white glow to Save/Move modal buttons in dark mode */
+#addFolderButton,
+#saveHereButton,
+#saveModalWrapper .btn {
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  border: 1px solid #888 !important;
+}
+
+#reportTitle {
+  background: transparent !important;
+  border: none !important;
+}
+
+.phase-section,
+.phase-header,
+.phase-input,
+.phase-body {
+  background: #1f1f1f !important;
+}
+
+@media (max-width: 486px) {
+  tbody td {
+    /* border-bottom: 1px solid white; */
+    background: transparent !important;
+  }
+
+  .table-container {
+    margin: 8px 18px 0px 11px !important;
+    padding: 0 !important;
+    border: none !important;
+    width: auto !important;
+    max-width: calc(100%-55px) !important;
+  }
+
+  table {
+    border: none !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  .folder-item-wrapper,
+  .file-item-wrapper {
+    border: none !important;
+  }
+
+  tbody tr {
+    border: none !important;
+  }
+
+  td {
+    border: 1px solid #555;
+    /* Softer border for dark mode */
+  }
+
+  .action-buttons button {
+    background-color: #444;
+    color: #ddd;
+    border: 1px solid #555;
+    padding: 1px 8px;
+    font-size: 13px;
+    margin: 1px 0;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .action-buttons button:hover {
+    background-color: #666;
+    color: #fff;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: flex-start;
+  }
+
+  th {
+    background: #070967 !important;
+    color: #ffffff !important;
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  td[data-label="Name"] {
+    font-weight: bold;
+    color: #ffffff !important;
+    background-color: #121212 !important;
+    /* Add a background! */
+  }
+
+  td[data-label="Name"].folder-item {
+    background-color: #000223 !important;
+  }
+
+  td.file-or-folder-cell {
+    cursor: pointer;
+    font-weight: bold;
+    color: #ffffff !important;
+    background-color: #06002a !important;
+  }
+
+  td.file-or-folder-name {
+    color: #ffffff !important;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    /* <-- Add this if missing */
+    border: none;
+    /* <-- REMOVE outer border */
+  }
+
+  th,
+  tr td {
+    border: 1px solid #6d6d6d !important;
+    /* ✅ Dim border for ALL tables, headers, and cells */
+  }
+
+  td:not([data-label="Name"]) {
+    color: #ffffff !important;
+    /* ✅ Dimmer text for Created Date, Modified Date, etc. */
+  }
+
+  td:first-child {
+    color: #ffffff !important;
+  }
+
+  td {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  /* THIS ONE EFFECTS THE BORDERS!!! */
+  tbody td {
+    padding: 6px 8px !important;
+    margin: 0px !important;
+    /*border: none !important;*/
+  }
+
+  tr.file-item-row {
+    background: linear-gradient(to bottom, #0a133a, #0d183c);
+    border-radius: 0px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  tr.file-item-row td {
+    background: transparent !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  tr {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  tbody td {
+    padding: 6px 8px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    /* Or your desired td background */
+  }
+
+  tr.file-row {
+    background: linear-gradient(to bottom, #000000, #021965);
+    border-radius: 0px;
+    overflow: hidden;
+    margin-bottom: 0px;
+  }
+
+  tr.folder-item-row {
+    background-color: #000935;
+    border-radius: 0px;
+    margin-bottom: 0px;
+  }
+
+  .action-buttons {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  td {
+    padding-top: 4px !important;
+    margin-top: 0 !important;
+  }
+
+  td>.action-buttons {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  td {
+    background-color: transparent !important;
+  }
+
+  tbody tr {
+    /*border-bottom: 1px solid #ddd;*/
+    /* border: 1px solid #ccc; */
+    border: none !important;
+    /* ✅ Prevents stacking with td borders */
+
+    /* THIS IS THE ITEM CELL BACKGROUND THAT SPANS CELLS */
+    /*background: linear-gradient(to bottom, #1a1a1a, #3a3a3a);*/
+    /*background: linear-gradient(to bottom, #000000, #081e67);*/
+  }
+
+  tbody tr.file-row {
+    /* THIS IS THE ITEM CELL BACKGROUND THAT SPANS CELLS */
+    background: linear-gradient(to bottom, #00124e 3%, #000000 70%, #000f40);
+    background: linear-gradient(to bottom, #00124e 1%, #000418 70%, #000f40);
+  }
+
+  tr.folder-row {
+    /* THIS IS THE ITEM CELL BACKGROUND THAT SPANS CELLS */
+    /*background: linear-gradient(168deg, #000000 78%, #2c2f3d);*/
+  }
+
+  td.file-row {
+    background-color: #003265 !important;
+    border-bottom: 1px solid #d4d4d4 !important;
+    /* THIS IS THE FILE NAME CELL */
+  }
+
+  tr.file-row {
+    /*border: 1px solid #d4d4d4 !important;*/
+    border: none !important;
+    margin-bottom: -3px;
+    border: 1px solid white !important;
+    /* THIS IS AROUND THE WHOLE FILE ITEM */
+  }
+
+  td.folder-row {
+    background-color: #000935 !important;
+    background-color: transparent !important;
+    background: linear-gradient(to right, #000935 0%, #51006c 92%) !important;
+    background: linear-gradient(to right, #000935 49%, #1d0026) !important;
+    background: linear-gradient(to right, #000935 50%, #130026) !important;
+    background: linear-gradient(44deg, #000935 16%, #1c004a 85%) !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+  }
+
+  tr.file-row td[data-label="Created Date"],
+  tr.file-row td[data-label="Modified Date"] {
+    color: #f5f5f5 !important;
+  }
+
+  #openModeContainer label {
+    position: relative;
+    top: 4px;
+  }
+}
+
+#openModeContainer {
+  padding-left: 6px !important;
+  /* 🔥 Tighter */
+  margin-left: 0px !important;
+}
+
+a:visited {
+  color: #7300c6;
+  /* light lavender purple, example */
+}
+
+#savingOverlay {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Phase Action Buttons */
+.btn-move,
+.btn-delete,
+.btn-cleanup {
+  background-color: #222 !important;
+  border: 1px solid #666 !important;
+  color: #ccc !important;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-move:hover,
+.btn-delete:hover,
+.btn-cleanup:hover {
+  background-color: #444 !important;
+  color: #fff !important;
+}
+
+body.new-list-page {
+  background: black;
+}
+
+body.new-list-page td {
+  color: #ffffff !important;
+}
+
+#savingContent {
+  color: #ffffff !important;
+}
+
+.spinner {
+  border: 3px solid #ffffff !important;
+  border-top: 3px solid transparent !important;
+}
+
+.save-modal-button-group .btn {
+  background-color: #222 !important;
+  color: #eee !important;
+  border: 1px solid #555 !important;
+}
+
+#saveModalTitle,
+.save-modal-title {
+  color: #4da6ff !important;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+/* Force dark mode on save modal wrapper and content */
+#saveModalWrapper,
+#newFolderModalWrapper,
+#renameModalWrapper,
+#alertModalWrapper,
+.modal,
+.modal-content,
+.save-modal {
+  background-color: #111 !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1) !important;
+}
+
+.save-modal-title,
+.current-dir-display {
+  color: #4da6ff !important;
+}
+
+.folder-list,
+#folderList,
+#eventReportName,
+#newFolderInput,
+#renameInput {
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+}
+
+.save-modal-button-group .btn,
+#addFolderButton,
+#saveHereButton,
+#cancelFolderButton {
+  background-color: #222 !important;
+  color: #eee !important;
+  border: 1px solid #555 !important;
+}
+
+.save-modal-button-group .btn:hover {
+  background-color: #333 !important;
+  color: #fff !important;
+}
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+.save-modal-button-group .btn,
+#addFolderButton,
+#saveHereButton,
+#cancelFolderButton {
+  background-color: #222 !important;
+  color: #eee !important;
+  border: 1px solid #555 !important;
+}
+
+.save-modal-button-group .btn,
+#addFolderButton,
+#saveHereButton,
+#cancelFolderButton {
+  background-color: #111 !important;
+  color: #f0f0f0 !important;
+  border: 1px solid #444 !important;
+  box-shadow: none !important;
+}
+
+.save-modal-button-group .btn:hover,
+#addFolderButton:hover,
+#saveHereButton:hover,
+#cancelFolderButton:hover {
+  background-color: #333 !important;
+  color: #ffffff !important;
+  border-color: #666 !important;
+}
+
+#folderListContainer,
+#folderList {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.modal-content,
+.save-modal,
+#modalPanel {
+  background: #111 !important;
+  border: 1px solid #333 !important;
+  box-shadow: none !important;
+}
+
+#addFolderButton,
+#saveHereButton,
+.save-modal-button-group .btn {
+  background-color: #000 !important;
+  color: #ffffff !important;
+  border: 1px solid #666 !important;
+  box-shadow: none !important;
+}
+
+#addFolderButton:hover,
+#saveHereButton:hover,
+.save-modal-button-group .btn:hover {
+  background-color: #111 !important;
+  color: #fff !important;
+  border-color: #888 !important;
+}
+
+#save-modal-button-group {
+  background-color: black !important;
+}
+
+#addFolderButton {
+  background-color: black !important;
+}
+
+#saveHereButton {
+  background-color: black !important;
+}
+
+#cancelButton {
+  background-color: black !important;
+}
+
+body.dark-mode .save-modal-button-group .btn,
+body.dark-mode #addFolderButton,
+body.dark-mode #saveHereButton,
+body.dark-mode #cancelFolderButton,
+body.dark-mode #cancelButton {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 1px solid #888 !important;
+  box-shadow: none !important;
+}
