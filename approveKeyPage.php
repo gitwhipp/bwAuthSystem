@@ -1,5 +1,5 @@
 <?php
-define('AUTH_EXAMPLE_VERSION', '1.00.0004');
+define('APPROVE_KEY_PAGE_VERSION', '1.00.0012');
 
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
@@ -50,6 +50,22 @@ if ($authFound) {
         $passwordUtilsPath = $authWebPath . 'js/passwordUtils.js';
     }
 }
+
+$actionLoggerPath = '';
+if ($authFound) {
+    if (file_exists($authSystem['fs'] . '/actionLogger.js')) {
+        $actionLoggerPath = $authWebPath . 'actionLogger.js';
+    } elseif (file_exists($authSystem['fs'] . '/js/actionLogger.js')) {
+        $actionLoggerPath = $authWebPath . 'js/actionLogger.js';
+    }
+}
+
+$keyName = isset($_GET['keyname']) ? preg_replace("/[^a-zA-Z0-9_-]/", "", trim($_GET['keyname'])) : '';
+$publicKey = isset($_GET['publickey']) ? trim($_GET['publickey']) : '';
+
+$safeKeyName = htmlspecialchars($keyName, ENT_QUOTES, 'UTF-8');
+$safePublicKey = htmlspecialchars($publicKey, ENT_QUOTES, 'UTF-8');
+$publicKeyLength = strlen($publicKey);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,27 +73,37 @@ if ($authFound) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth Protected Page Example</title>
+    <title>Approve Device Key</title>
+    <link rel="icon" type="image/png" href="images/authSystemIcon.png">
+
+    <?php if ($actionLoggerPath): ?>
+        <script src="<?php echo htmlspecialchars($actionLoggerPath); ?>?v=<?php echo APPROVE_KEY_PAGE_VERSION; ?>"
+            defer></script>
+    <?php endif; ?>
 
     <?php if ($passwordUtilsPath): ?>
-        <script src="<?php echo htmlspecialchars($passwordUtilsPath); ?>?v=<?php echo AUTH_EXAMPLE_VERSION; ?>"
+        <script src="<?php echo htmlspecialchars($passwordUtilsPath); ?>?v=<?php echo APPROVE_KEY_PAGE_VERSION; ?>"
             defer></script>
     <?php endif; ?>
 
     <style>
         :root {
-            --page-bg: #05070b;
-            --panel-bg: rgba(8, 13, 21, 0.92);
-            --panel-bg-soft: rgba(13, 20, 31, 0.82);
-            --text: #e8f1ff;
-            --muted: #9cadc3;
-            --border: rgba(67, 151, 255, 0.34);
-            --border-soft: rgba(255, 255, 255, 0.13);
-            --blue: #2495ff;
-            --danger: #b41f2a;
-            --ok: #32c46c;
-            --warn: #d39b28;
-            --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+            --page-bg: #070b12;
+            --panel-bg: #101724;
+            --panel-bg-soft: #121c2b;
+            --header-bg: #05070c;
+            --text-main: #f5f7fb;
+            --text-muted: #9ca8ba;
+            --text-soft: #c7d1df;
+            --border-main: rgba(255, 255, 255, 0.11);
+            --border-strong: rgba(255, 255, 255, 0.18);
+            --button-main: #2563eb;
+            --button-main-hover: #1d4ed8;
+            --button-secondary: #334155;
+            --button-secondary-hover: #475569;
+            --button-danger: #991b1b;
+            --focus-ring: rgba(37, 99, 235, 0.35);
+            --shadow-main: 0 22px 70px rgba(0, 0, 0, 0.42);
         }
 
         * {
@@ -85,464 +111,303 @@ if ($authFound) {
         }
 
         html {
-            min-height: 100%;
             background: var(--page-bg);
         }
 
         body {
             margin: 0;
             min-height: 100vh;
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
             background:
-                radial-gradient(circle at 50% 100%, rgba(28, 96, 160, 0.22), transparent 42%),
-                radial-gradient(circle at 15% 10%, rgba(36, 149, 255, 0.16), transparent 30%),
-                linear-gradient(180deg, #05070b 0%, #080d15 52%, #040609 100%);
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 34rem),
+                linear-gradient(180deg, #070b12 0%, #0a101a 100%);
+            color: var(--text-main);
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         a {
-            color: var(--blue);
+            color: inherit;
         }
 
-        .authHeader {
+        .topHeader {
             width: 100%;
-            margin: 0;
-            padding: 22px clamp(16px, 4vw, 52px);
-            border-bottom: 1px solid var(--border);
-            background:
-                linear-gradient(90deg, rgba(4, 10, 18, 0.98), rgba(8, 22, 38, 0.96)),
-                radial-gradient(circle at 80% 0%, rgba(36, 149, 255, 0.22), transparent 34%);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+            background: rgba(5, 7, 12, 0.96);
+            border-bottom: 1px solid var(--border-main);
+            box-shadow: 0 16px 44px rgba(0, 0, 0, 0.28);
         }
 
-        .headerLine {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 16px;
-            max-width: 880px;
+        .headerInner {
+            width: min(840px, calc(100% - 28px));
             margin: 0 auto;
+            padding: 22px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
         }
 
-        .authHeader h1 {
+        .eyebrow {
+            margin: 0 0 7px;
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        h1 {
             margin: 0;
-            font-size: clamp(1.45rem, 4vw, 2.15rem);
-            line-height: 1.05;
-            letter-spacing: -0.035em;
-            color: var(--text);
-        }
-
-        .authHeader h1 span {
-            color: var(--blue);
+            font-size: clamp(1.65rem, 4vw, 2.45rem);
+            letter-spacing: -0.04em;
+            line-height: 1.02;
         }
 
         .versionText {
-            color: var(--blue);
-            font-size: 0.95rem;
-            white-space: nowrap;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 700;
         }
 
-        .authMain {
-            width: min(880px, calc(100% - 28px));
+        .headerLink {
+            flex: 0 0 auto;
+            min-height: 40px;
+            padding: 10px 13px;
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            color: var(--text-soft);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .pageShell {
+            width: min(840px, calc(100% - 28px));
             margin: 0 auto;
-            padding: clamp(18px, 4vw, 38px) 0 36px;
-        }
-
-        .tagline {
-            margin: 0 0 18px;
-            padding-left: 13px;
-            border-left: 3px solid var(--blue);
-            color: var(--muted);
-            font-size: 1.02rem;
-        }
-
-        .panel,
-        details {
-            border: 1px solid var(--border-soft);
-            background: var(--panel-bg);
-            box-shadow: var(--shadow);
-            margin-bottom: 14px;
+            padding: 24px 0 38px;
         }
 
         .panel {
-            padding: clamp(16px, 4vw, 28px);
-            border-color: var(--border);
+            background: linear-gradient(180deg, rgba(16, 23, 36, 0.98), rgba(12, 18, 29, 0.98));
+            border: 1px solid var(--border-main);
+            border-radius: 16px;
+            box-shadow: var(--shadow-main);
+            padding: clamp(17px, 3vw, 26px);
+            margin-bottom: 16px;
         }
 
-        .panel h2 {
+        .primaryPanel {
+            border-color: rgba(37, 99, 235, 0.36);
+        }
+
+        h2 {
             margin: 0 0 8px;
-            color: var(--blue);
-            font-size: 1.35rem;
+            font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+            letter-spacing: -0.02em;
+        }
+
+        h3 {
+            margin: 22px 0 8px;
+            color: var(--text-soft);
+            font-size: 1rem;
         }
 
         .helpText {
             margin: 0 0 18px;
-            color: var(--muted);
-            line-height: 1.45;
+            color: var(--text-muted);
+            line-height: 1.48;
         }
 
-        .steps {
+        .metaGrid {
             display: grid;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .step {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            border: 1px solid var(--border-soft);
-            background: rgba(0, 0, 0, 0.18);
-            padding: 10px 11px;
-        }
-
-        .stepName {
-            color: var(--text);
-            font-weight: 700;
-        }
-
-        .stepSub {
-            display: block;
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-
-        .pill {
-            white-space: nowrap;
-            font-weight: 800;
-            color: var(--warn);
-        }
-
-        .pill.ok {
-            color: var(--ok);
-        }
-
-        .pill.bad {
-            color: #ff6470;
-        }
-
-        label {
-            display: block;
-            margin: 14px 0 7px;
-            color: var(--text);
-            font-weight: 700;
-        }
-
-        input {
-            width: 100%;
-            min-height: 46px;
-            padding: 10px 12px;
-            border: 1px solid rgba(36, 149, 255, 0.45);
-            background: rgba(0, 0, 0, 0.28);
-            color: var(--text);
-            font-size: 1rem;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--blue);
-            box-shadow: 0 0 0 2px rgba(36, 149, 255, 0.18);
-        }
-
-        .buttonStack {
-            display: grid;
-            gap: 10px;
+            grid-template-columns: 160px 1fr;
+            gap: 10px 14px;
             margin-top: 18px;
+        }
+
+        .metaLabel {
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .metaValue {
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 310px;
+            overflow: auto;
+            background: #050910 !important;
+            border: 1px solid var(--border-main);
+            border-radius: 10px;
+            padding: 12px;
+            color: #dbeafe !important;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.86rem;
+            line-height: 1.42;
+            user-select: text;
         }
 
         .buttonRow {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 14px;
+            margin-top: 18px;
         }
 
         button,
         .buttonLink {
-            min-height: 44px;
-            border: 1px solid transparent;
+            min-height: 42px;
+            border: 0;
+            border-radius: 10px;
             padding: 10px 14px;
-            background: var(--blue);
-            color: #ffffff;
+            background: var(--button-main);
+            color: #fff;
             cursor: pointer;
             text-decoration: none;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.98rem;
-            font-weight: 700;
+            line-height: 1.15;
         }
 
-        .primaryButton {
-            width: 100%;
-            background: linear-gradient(180deg, #2aa3ff, #126fd1);
+        button:hover,
+        .buttonLink:hover {
+            background: var(--button-main-hover);
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
 
         .secondaryButton {
-            border-color: rgba(255, 255, 255, 0.18);
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text);
+            background: var(--button-secondary);
         }
 
-        .dangerButton {
-            border-color: rgba(255, 64, 84, 0.65);
-            background: rgba(180, 31, 42, 0.16);
-            color: #ff5d69;
+        .secondaryButton:hover {
+            background: var(--button-secondary-hover);
         }
 
-        details {
-            background: var(--panel-bg-soft);
-        }
-
-        summary {
-            cursor: pointer;
-            padding: 14px 16px;
-            color: var(--blue);
-            font-size: 1.05rem;
-            font-weight: 700;
-            list-style: none;
-        }
-
-        summary::-webkit-details-marker {
-            display: none;
-        }
-
-        summary::after {
-            content: "+";
-            float: right;
-            color: var(--muted);
-        }
-
-        details[open] summary::after {
-            content: "–";
-        }
-
-        .detailBody {
-            padding: 0 16px 16px;
-            color: var(--muted);
+        .notice {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border: 1px solid rgba(36, 149, 255, 0.35);
+            border-radius: 8px;
+            background: rgba(36, 149, 255, 0.08);
             line-height: 1.45;
+            color: var(--text-soft);
         }
 
-        pre {
+        .statusBox {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            line-height: 1.45;
             white-space: pre-wrap;
-            word-break: break-word;
-            max-height: 210px;
-            overflow: auto;
-            padding: 10px;
-            border: 1px solid var(--border-soft);
-            background: rgba(0, 0, 0, 0.28);
-            color: var(--text);
+            user-select: text;
         }
 
-        footer {
-            width: min(880px, calc(100% - 28px));
-            margin: 0 auto;
-            padding: 0 0 28px;
-            color: var(--muted);
-            text-align: center;
-            font-size: 0.9rem;
+        .statusOk {
+            display: block;
+            border: 1px solid rgba(34, 197, 94, 0.38);
+            background: rgba(34, 197, 94, 0.09);
+            color: #bbf7d0;
+        }
+
+        .statusBad {
+            display: block;
+            border: 1px solid rgba(239, 68, 68, 0.38);
+            background: rgba(239, 68, 68, 0.09);
+            color: #fecaca;
         }
 
         @media (max-width: 560px) {
-            .headerLine {
+            .headerInner {
                 display: block;
             }
 
-            .versionText {
-                display: block;
-                margin-top: 8px;
+            .headerLink {
+                margin-top: 14px;
+                width: 100%;
             }
 
-            .buttonRow {
-                display: grid;
+            .metaGrid {
+                grid-template-columns: 1fr;
             }
 
             button,
             .buttonLink {
                 width: 100%;
             }
-
-            .step {
-                display: block;
-            }
-
-            .pill {
-                display: block;
-                margin-top: 5px;
-            }
         }
     </style>
 </head>
 
 <body>
-    <header class="authHeader">
-        <div class="headerLine">
-            <h1><span>bwAuthSystem</span> Protected Page Example</h1>
-            <div class="versionText">v
-                <?php echo htmlspecialchars(AUTH_EXAMPLE_VERSION); ?>
+    <header class="topHeader">
+        <div class="headerInner">
+            <div>
+                <p class="eyebrow">bwAuthSystem</p>
+                <h1>Approve Device Key <span
+                        class="versionText">v<?php echo htmlspecialchars(APPROVE_KEY_PAGE_VERSION); ?></span></h1>
             </div>
+            <a class="headerLink" href="<?php echo htmlspecialchars($authWebPath); ?>index.php">Admin Login</a>
         </div>
     </header>
 
-    <main class="authMain">
-        <p class="tagline">Example admin page using device-signature MFA.</p>
-
-        <section class="panel">
-            <h2 id="mainStatusTitle">Checking Auth Status</h2>
-            <p id="mainStatusText" class="helpText">
-                Checking for auth files, browser device signature, and access token.
-            </p>
-
-            <div class="steps">
-                <div class="step">
-                    <div>
-                        <span class="stepName">Auth files</span>
-                        <span class="stepSub">
-                            <?php echo htmlspecialchars($authSystem['label']); ?>
-                        </span>
-                    </div>
-                    <span class="pill <?php echo $authFound ? 'ok' : 'bad'; ?>">
-                        <?php echo $authFound ? 'Found' : 'Missing'; ?>
-                    </span>
-                </div>
-
-                <div class="step">
-                    <div>
-                        <span class="stepName">Device signature</span>
-                        <span class="stepSub">Private key installed in this browser.</span>
-                    </div>
-                    <span id="deviceSignaturePill" class="pill">Checking</span>
-                </div>
-
-                <div class="step">
-                    <div>
-                        <span class="stepName">Access token</span>
-                        <span class="stepSub">Token created after login.</span>
-                    </div>
-                    <span id="tokenPill" class="pill">Checking</span>
-                </div>
-            </div>
-
-            <div class="buttonRow">
-                <a class="buttonLink secondaryButton" href="<?php echo htmlspecialchars($authWebPath); ?>index.php">Open
-                    Auth Login</a>
-                <a class="buttonLink secondaryButton"
-                    href="<?php echo htmlspecialchars($authWebPath); ?>signatures.php">Open Signatures</a>
-                <button type="button" class="secondaryButton" onclick="refreshAuthStatus()">Refresh</button>
-            </div>
-        </section>
-
-        <section id="loginPanel" class="panel">
-            <h2>Login</h2>
-            <p class="helpText">Use this form after the device signature is installed.</p>
-
-            <form id="authLoginForm" onsubmit="event.preventDefault(); exampleSubmitPassword();">
-                <label for="accessPassword">Access Password</label>
-                <input type="password" id="accessPassword" autocomplete="current-password"
-                    placeholder="Enter access password">
-
-                <div class="buttonStack">
-                    <button id="passwordSubmit" class="primaryButton" type="submit">Login</button>
-                    <button id="passwordShow" class="secondaryButton" type="button"
-                        onclick="togglePasswordVisibility()">Show Password</button>
-                </div>
-            </form>
-        </section>
-
-        <section id="protectedPanel" class="panel" style="display:none;">
-            <h2>Logged In With Token</h2>
+    <main class="pageShell">
+        <section class="panel primaryPanel">
+            <h2>Approve Public Device Key</h2>
             <p class="helpText">
-                This section is visible because the browser has a valid access token.
+                Review the device key below. Clicking approve will send the key name, public key, and current admin
+                access token to keyApprover.php.
             </p>
 
-            <pre id="tokenPreview">Token preview unavailable.</pre>
+            <div class="metaGrid">
+                <div class="metaLabel">Device Name</div>
+                <div class="metaValue" id="keyNameDisplay"><?php echo $safeKeyName !== '' ? $safeKeyName : 'Missing'; ?>
+                </div>
+
+                <div class="metaLabel">Public Key Length</div>
+                <div class="metaValue"><?php echo (int) $publicKeyLength; ?> characters</div>
+
+                <div class="metaLabel">Auth Files</div>
+                <div class="metaValue"><?php echo htmlspecialchars($authSystem['label']); ?></div>
+
+                <div class="metaLabel">Token Status</div>
+                <div class="metaValue" id="tokenStatusDisplay">Checking browser token...</div>
+            </div>
+
+            <h3>Public Key</h3>
+            <pre
+                id="publicKeyDisplay"><?php echo $safePublicKey !== '' ? $safePublicKey : 'Missing public key.'; ?></pre>
+
+            <div class="notice">
+                You must be logged in as admin in this browser. The backend helper still verifies the access token
+                before writing to DEVICE_KEYS.
+            </div>
 
             <div class="buttonRow">
-                <button type="button" class="secondaryButton" onclick="copyAccessTokenExample()">Copy Token</button>
-                <button type="button" class="secondaryButton" onclick="clearAccessTokenExample()">Clear Token</button>
-                <button type="button" class="dangerButton" onclick="deleteDeviceSignatureExample()">Delete Device
-                    Signature</button>
+                <button type="button" id="approveKeyButton" onclick="approveDeviceKey()">Approve Device Key</button>
+                <a class="buttonLink secondaryButton"
+                    href="<?php echo htmlspecialchars($authWebPath); ?>signatures.php">Back To Signatures</a>
             </div>
+
+            <div id="statusBox" class="statusBox"></div>
         </section>
-
-        <details>
-            <summary>Example Code Pattern</summary>
-            <div class="detailBody">
-                <pre>const token = await getAccessToken();
-
-fetch("protectedEndpoint.php", {
-    method: "GET",
-    headers: {
-        "Authorization": `Bearer ${token}`
-    }
-});</pre>
-            </div>
-        </details>
     </main>
 
-    <footer>
-        bwAuthSystem — secure device-signature MFA for small PHP admin tools.
-    </footer>
-
     <script>
-        const AUTH_BASE = "<?php echo addslashes($authWebPath); ?>";
         const AUTH_FOUND = <?php echo $authFound ? 'true' : 'false'; ?>;
-        const KEY_DB_NAME = "BWCSAuthDB";
-        const KEY_STORE_NAME = "privateKeys";
+        const APPROVE_KEY_NAME = <?php echo json_encode($keyName, JSON_UNESCAPED_SLASHES); ?>;
+        const APPROVE_PUBLIC_KEY = <?php echo json_encode($publicKey, JSON_UNESCAPED_SLASHES); ?>;
 
-        function setPill(id, text, state) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.textContent = text;
-            el.className = "pill" + (state ? " " + state : "");
-        }
-
-        function setMainStatus(title, text) {
-            document.getElementById("mainStatusTitle").textContent = title;
-            document.getElementById("mainStatusText").textContent = text;
-        }
-
-        function openKeyDbExample() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(KEY_DB_NAME, 1);
-
-                request.onupgradeneeded = function (event) {
-                    const db = event.target.result;
-                    if (!db.objectStoreNames.contains(KEY_STORE_NAME)) {
-                        db.createObjectStore(KEY_STORE_NAME);
-                    }
-                };
-
-                request.onsuccess = function () {
-                    resolve(request.result);
-                };
-
-                request.onerror = function () {
-                    reject(request.error);
-                };
-            });
-        }
-
-        async function getDeviceSignatureExample() {
-            const db = await openKeyDbExample();
-
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([KEY_STORE_NAME], "readonly");
-                const store = transaction.objectStore(KEY_STORE_NAME);
-                const privateKeyRequest = store.get("installedPrivateKey");
-
-                transaction.oncomplete = function () {
-                    resolve(!!privateKeyRequest.result);
-                };
-
-                transaction.onerror = function () {
-                    reject(transaction.error);
-                };
-            });
-        }
-
-        async function getTokenExample() {
+        async function getApprovalAccessToken() {
             if (typeof getAccessToken === "function") {
                 return await getAccessToken();
             }
@@ -551,164 +416,144 @@ fetch("protectedEndpoint.php", {
                 sessionStorage.getItem("accessToken") ||
                 localStorage.getItem("authToken") ||
                 sessionStorage.getItem("authToken") ||
+                localStorage.getItem("jwt") ||
+                sessionStorage.getItem("jwt") ||
                 "";
         }
 
-        async function validateTokenExample(token) {
-            if (!token || !AUTH_FOUND) return false;
+        function showStatus(ok, message) {
+            const statusBox = document.getElementById("statusBox");
+            statusBox.className = ok ? "statusBox statusOk" : "statusBox statusBad";
+            statusBox.textContent = message;
+        }
+
+        async function updatePageState() {
+            const approveButton = document.getElementById("approveKeyButton");
+
+            if (!AUTH_FOUND) {
+                document.getElementById("tokenStatusDisplay").textContent = "Auth system files not found.";
+                approveButton.disabled = true;
+                return;
+            }
+
+            if (!APPROVE_KEY_NAME || !APPROVE_PUBLIC_KEY) {
+                document.getElementById("tokenStatusDisplay").textContent = "Missing key name or public key.";
+                approveButton.disabled = true;
+                return;
+            }
+
+            const token = await getApprovalAccessToken();
+
+            if (!token) {
+                document.getElementById("tokenStatusDisplay").textContent = "No access token found. Log in as admin first.";
+                approveButton.disabled = true;
+                return;
+            }
+
+            document.getElementById("tokenStatusDisplay").textContent = "Access token found. Backend will verify admin role.";
+            approveButton.disabled = false;
+        }
+
+        async function approvalLogAction(actionName, metadata) {
+            if (typeof logAction !== "function") {
+                return;
+            }
 
             try {
-                const response = await fetch(AUTH_BASE + "validate.php", {
-                    method: "GET",
+                let userIP = "Unknown";
+
+                if (typeof getUserIP === "function") {
+                    userIP = await getUserIP();
+                }
+
+                logAction(actionName, {
+                    ...metadata,
+                    timestamp: new Date().toISOString(),
+                    ip: userIP,
+                    browser: navigator.userAgent
+                });
+            } catch (error) {
+                console.log("Approval logging failed:", error);
+            }
+        }
+
+        async function approveDeviceKey() {
+            const token = await getApprovalAccessToken();
+
+            if (!token) {
+                showStatus(false, "No access token found. Log in as admin first, then reopen this approval link.");
+                return;
+            }
+
+            if (!APPROVE_KEY_NAME || !APPROVE_PUBLIC_KEY) {
+                showStatus(false, "Missing key name or public key.");
+                return;
+            }
+
+            document.getElementById("approveKeyButton").disabled = true;
+            showStatus(true, "Submitting approval...");
+
+            await approvalLogAction("Key Approval Attempt", {
+                keyname: APPROVE_KEY_NAME
+            });
+
+            try {
+                const response = await fetch("api/keyApprover.php", {
+                    method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        keyname: APPROVE_KEY_NAME,
+                        publickey: APPROVE_PUBLIC_KEY,
+                        token: token
+                    })
                 });
 
                 const rawText = await response.text();
+                let result;
 
                 try {
-                    const data = JSON.parse(rawText);
-                    return data.status === "success" ||
-                        data.valid === true ||
-                        data.authenticated === true ||
-                        data.loggedIn === true;
+                    result = JSON.parse(rawText);
                 } catch {
-                    return response.ok;
+                    showStatus(response.ok, rawText);
+                    if (!response.ok) {
+                        document.getElementById("approveKeyButton").disabled = false;
+                    }
+                    return;
                 }
-            } catch {
-                return false;
+
+                const ok = result.status === "success";
+
+                showStatus(
+                    ok,
+                    "Status: " + (result.status || "") +
+                    "\nMessage: " + (result.message || "") +
+                    (result.key_name ? "\nDevice Name: " + result.key_name : "") +
+                    (typeof result.already_existed !== "undefined" ? "\nAlready Existed: " + result.already_existed : "")
+                );
+
+                await approvalLogAction(ok ? "Key Approval Success" : "Key Approval Failure", {
+                    keyname: APPROVE_KEY_NAME,
+                    response: result
+                });
+
+                if (!ok) {
+                    document.getElementById("approveKeyButton").disabled = false;
+                }
+            } catch (error) {
+                showStatus(false, "Request failed: " + error.message);
+
+                await approvalLogAction("Key Approval Failure", {
+                    keyname: APPROVE_KEY_NAME,
+                    error: error.message
+                });
+
+                document.getElementById("approveKeyButton").disabled = false;
             }
         }
 
-        async function refreshAuthStatus() {
-            const loginPanel = document.getElementById("loginPanel");
-            const protectedPanel = document.getElementById("protectedPanel");
-            const tokenPreview = document.getElementById("tokenPreview");
-
-            let hasSignature = false;
-
-            try {
-                hasSignature = await getDeviceSignatureExample();
-            } catch {
-                hasSignature = false;
-            }
-
-            const token = await getTokenExample();
-            const tokenValid = await validateTokenExample(token);
-
-            setPill("deviceSignaturePill", hasSignature ? "Installed" : "Missing", hasSignature ? "ok" : "bad");
-            setPill("tokenPill", tokenValid ? "Logged In" : "No Valid Token", tokenValid ? "ok" : "bad");
-
-            if (!AUTH_FOUND) {
-                setMainStatus("Auth System Missing", "This page could not find the auth system files.");
-                loginPanel.style.display = "none";
-                protectedPanel.style.display = "none";
-                return;
-            }
-
-            if (!hasSignature) {
-                setMainStatus("Device Signature Missing", "Open the signatures page and install a device signature first.");
-                loginPanel.style.display = "none";
-                protectedPanel.style.display = "none";
-                return;
-            }
-
-            if (!tokenValid) {
-                setMainStatus("Device Signature Installed", "Login with the site password to create an access token.");
-                loginPanel.style.display = "block";
-                protectedPanel.style.display = "none";
-                return;
-            }
-
-            setMainStatus("Logged In With Token", "Admin verified. Protected content is visible.");
-            loginPanel.style.display = "none";
-            protectedPanel.style.display = "block";
-
-            if (tokenPreview) {
-                tokenPreview.textContent = token
-                    ? token.substring(0, 32) + "..." + token.substring(Math.max(token.length - 20, 0))
-                    : "No token found.";
-            }
-        }
-
-        async function exampleSubmitPassword() {
-            if (typeof submitPassword === "function") {
-                await submitPassword();
-                setTimeout(refreshAuthStatus, 400);
-                return;
-            }
-
-            alert("submitPassword() was not found. Check that passwordUtils.js loaded.");
-        }
-
-        function togglePasswordVisibility() {
-            const input = document.getElementById("accessPassword");
-            const button = document.getElementById("passwordShow");
-
-            if (input.type === "password") {
-                input.type = "text";
-                button.textContent = "Hide Password";
-            } else {
-                input.type = "password";
-                button.textContent = "Show Password";
-            }
-        }
-
-        async function clearAccessTokenExample() {
-            if (typeof clearPasswordCache === "function") {
-                clearPasswordCache();
-            }
-
-            localStorage.removeItem("accessToken");
-            sessionStorage.removeItem("accessToken");
-            localStorage.removeItem("authToken");
-            sessionStorage.removeItem("authToken");
-
-            await refreshAuthStatus();
-        }
-
-        async function copyAccessTokenExample() {
-            const token = await getTokenExample();
-
-            if (!token) {
-                alert("No token found.");
-                return;
-            }
-
-            await navigator.clipboard.writeText(token);
-            alert("Token copied.");
-        }
-
-        async function deleteDeviceSignatureExample() {
-            if (!confirm("Delete the device signature from this browser?")) {
-                return;
-            }
-
-            const db = await openKeyDbExample();
-
-            await new Promise((resolve, reject) => {
-                const transaction = db.transaction([KEY_STORE_NAME], "readwrite");
-                const store = transaction.objectStore(KEY_STORE_NAME);
-
-                store.delete("installedPrivateKey");
-                store.delete("installedPublicKey");
-                store.delete("privateKeyName");
-
-                transaction.oncomplete = function () {
-                    resolve(true);
-                };
-
-                transaction.onerror = function () {
-                    reject(transaction.error);
-                };
-            });
-
-            localStorage.removeItem("privateKeyName");
-            await clearAccessTokenExample();
-        }
-
-        document.addEventListener("DOMContentLoaded", refreshAuthStatus);
+        document.addEventListener("DOMContentLoaded", updatePageState);
     </script>
 </body>
 

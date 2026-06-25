@@ -73,22 +73,23 @@ if (strpos($public_key, '-----BEGIN PUBLIC KEY-----') === false) {
     sendJson(["status" => "error", "message" => "Invalid public key format."], 400);
 }
 
-$mailEnabled = ($env['MAIL_ENABLED'] ?? 'false') === 'true';
-$smtpUsername = $env['SMTP_USERNAME'] ?? ($env['GMAIL_USERNAME'] ?? '');
-$smtpPassword = $env['SMTP_PASSWORD'] ?? ($env['GMAIL_PASSWORD'] ?? '');
-$smtpHost = $env['SMTP_HOST'] ?? 'smtp.gmail.com';
-$smtpPort = (int) ($env['SMTP_PORT'] ?? 587);
-$approvalEmailDefault = $env['APPROVAL_EMAIL'] ?? $smtpUsername;
-$approvalEmailTo = $approval_email !== '' ? $approval_email : $approvalEmailDefault;
-$authBaseUrl = rtrim($env['AUTH_BASE_URL'] ?? '', '/');
+$smtpUsername = trim($_POST['smtp_username'] ?? '');
+$smtpPassword = trim($_POST['smtp_password'] ?? '');
+$smtpHost = 'smtp.gmail.com';
+$smtpPort = 587;
+$approvalEmailTo = $approval_email !== '' ? $approval_email : $smtpUsername;
 
-if (!$mailEnabled || $smtpUsername === '' || $smtpPassword === '' || $approvalEmailTo === '' || $authBaseUrl === '') {
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$basePath = rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/');
+$authBaseUrl = $scheme . '://' . $host . $basePath;
+
+if ($smtpUsername === '' || $smtpPassword === '' || $approvalEmailTo === '') {
     sendJson([
-        "status" => "manual",
-        "message" => "Mail is not configured. Add this device manually.",
-        "key_name" => $key_name,
-        "env_entry" => '"' . $key_name . '":' . json_encode($public_key)
-    ]);
+        "status" => "error",
+        "message" => "Missing mail input.",
+        "diagnostic" => "Need sender Gmail, sender app password, and recipient email."
+    ], 400);
 }
 
 $approval_link = $authBaseUrl . "/approveKeyPage.php?"
@@ -137,6 +138,9 @@ try {
     sendJson([
         "status" => "error",
         "message" => "Error sending email.",
-        "details" => ($env['AUTH_DEBUG'] ?? 'false') === 'true' ? $mail->ErrorInfo : null
+        "diagnostic" => $mail->ErrorInfo ?: $e->getMessage(),
+        "approval_email" => $approvalEmailTo,
+        "smtp_host" => $smtpHost,
+        "smtp_port" => $smtpPort
     ], 500);
 }

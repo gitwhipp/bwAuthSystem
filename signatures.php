@@ -1,5 +1,5 @@
 <?php
-define('SIGNATURES_VERSION', '1.01.0011');
+define('SIGNATURES_VERSION', '1.01.0020');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,8 +15,6 @@ define('SIGNATURES_VERSION', '1.01.0011');
             localStorage.setItem("signatures_page_version", VERSION);
         }
     </script>
-
-    authProtectedPageExample.php
 
     <link rel="icon" type="image/png" href="images/authSystemIcon.png">
     <style>
@@ -337,6 +335,77 @@ define('SIGNATURES_VERSION', '1.01.0011');
             font-weight: 700;
         }
 
+        .mailSetupNote {
+            margin: 8px 0 18px;
+            color: var(--text-muted);
+            line-height: 1.48
+        }
+
+        .mailSetupNote h3 {
+            margin: 12px 0 6px;
+            color: var(--text-soft)
+        }
+
+        .mailSetupNote ol {
+            margin: 8px 0 0 22px;
+            padding: 0
+        }
+
+        .mailModalOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .72);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 18px
+        }
+
+        .mailModal {
+            width: min(560px, 100%);
+            background: var(--panel-bg);
+            border: 1px solid var(--border-strong);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: var(--shadow-main)
+        }
+
+        .mailModal p {
+            color: var(--text-muted);
+            line-height: 1.45
+        }
+
+        .mailModalActions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px
+        }
+
+        #simpleModalMessage {
+            white-space: pre-wrap;
+            user-select: text;
+        }
+
+        .mailModal input,
+        .mailModal input:-webkit-autofill,
+        .mailModal input:-webkit-autofill:hover,
+        .mailModal input:-webkit-autofill:focus,
+        .mailModal input:-webkit-autofill:active {
+            background-color: #080d15 !important;
+            color: var(--text-main) !important;
+            -webkit-text-fill-color: var(--text-main) !important;
+            box-shadow: 0 0 0 1000px #080d15 inset !important;
+            caret-color: var(--text-main) !important;
+        }
+
+        .mailModal input:focus {
+            border-color: rgba(37, 99, 235, 0.82) !important;
+            box-shadow:
+                0 0 0 1000px #080d15 inset,
+                0 0 0 4px var(--focus-ring) !important;
+        }
+
         @media (max-width: 560px) {
             .headerInner {
                 display: block;
@@ -401,6 +470,19 @@ define('SIGNATURES_VERSION', '1.01.0011');
                 The private key stays in this browser. Only the public key should be added to DEVICE_KEYS.
             </div>
         </section>
+
+        <div class="mailSetupNote">
+            <p><strong>*Note:</strong> Device keys must be added to the env file manually unless email is properly set
+                up. With email, an authorized user using a browser with their key installed can provision a new user
+                with the click of a button.</p>
+            <h3>Gmail app password setup</h3>
+            <ol>
+                <li>Enable 2-Step Verification on the sender Gmail account.</li>
+                <li>Open Google Account security settings.</li>
+                <li>Create an App Password for mail.</li>
+                <li>Use that app password here, not the normal Gmail password.</li>
+            </ol>
+        </div>
 
         <section class="panel" id="keyContainer">
             <h2>Generated Key Pair</h2>
@@ -504,7 +586,64 @@ define('SIGNATURES_VERSION', '1.01.0011');
 
     </main>
 
+    <div id="mailModalOverlay" class="mailModalOverlay">
+        <div class="mailModal">
+            <h2>Email Approval Setup</h2>
+            <p>For Gmail, use a Google App Password, not your normal Gmail password. Enable 2-Step Verification, then
+                create an App Password in Google Account security settings.</p>
+
+            <label for="mailRecipient">Your Email</label>
+            <input id="mailRecipient" type="email">
+
+            <label for="mailSender">Admin Gmail Address</label>
+            <input id="mailSender" type="email">
+
+            <label for="mailPassword">Admin Gmail App Password</label>
+            <input id="mailPassword" type="password">
+
+            <div class="mailModalActions">
+                <button type="button" onclick="submitMailApprovalModal()">Send Approval Email</button>
+                <button type="button" class="secondaryButton" onclick="closeMailApprovalModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="simpleModalOverlay" class="mailModalOverlay">
+        <div class="mailModal">
+            <h2 id="simpleModalTitle"></h2>
+            <p id="simpleModalMessage"></p>
+            <div class="mailModalActions" id="simpleModalActions"></div>
+        </div>
+    </div>
+
     <script>
+        let simpleModalConfirmCallback = null;
+
+        function showSimpleModal(title, message) {
+            simpleModalConfirmCallback = null;
+            document.getElementById("simpleModalTitle").textContent = title;
+            document.getElementById("simpleModalMessage").textContent = message;
+            document.getElementById("simpleModalActions").innerHTML = '<button type="button" onclick="closeSimpleModal()">OK</button>';
+            document.getElementById("simpleModalOverlay").style.display = "flex";
+        }
+
+        function showConfirmModal(title, message, callback) {
+            simpleModalConfirmCallback = callback;
+            document.getElementById("simpleModalTitle").textContent = title;
+            document.getElementById("simpleModalMessage").textContent = message;
+            document.getElementById("simpleModalActions").innerHTML = '<button type="button" onclick="confirmSimpleModal()">Yes</button><button type="button" class="secondaryButton" onclick="closeSimpleModal()">Cancel</button>';
+            document.getElementById("simpleModalOverlay").style.display = "flex";
+        }
+
+        function closeSimpleModal() {
+            document.getElementById("simpleModalOverlay").style.display = "none";
+        }
+
+        async function confirmSimpleModal() {
+            closeSimpleModal();
+            if (simpleModalConfirmCallback) await simpleModalConfirmCallback();
+        }
+
         const KEY_DB_NAME = "BWCSAuthDB";
         const KEY_STORE_NAME = "privateKeys";
 
@@ -694,12 +833,12 @@ define('SIGNATURES_VERSION', '1.01.0011');
                 const keyName = document.getElementById("keyName").value.trim();
 
                 if (!keyName) {
-                    alert("Please enter a name for this device/key.");
+                    showSimpleModal("Missing Device Name", "Enter a name for this device/key first.");
                     return;
                 }
 
                 if (!window.crypto || !window.crypto.subtle) {
-                    alert("Web Crypto API is not available. Use HTTPS and a supported browser.");
+                    showSimpleModal("Crypto Not Available", "Web Crypto API is not available. Use HTTPS and a supported browser.");
                     return;
                 }
 
@@ -724,31 +863,49 @@ define('SIGNATURES_VERSION', '1.01.0011');
                 document.getElementById("publicKey").textContent = publicPem;
                 document.getElementById("keyContainer").style.display = "block";
 
-                if (confirm("Key generated. Install this key pair in this browser?")) {
-                    await installGeneratedKey(privatePem, publicPem, keyName);
-                }
+                showConfirmModal(
+                    "Key Generated",
+                    "Install this key pair in this browser?",
+                    async () => {
+                        await installGeneratedKey(privatePem, publicPem, keyName);
+                    }
+                );
             } catch (error) {
                 console.error("generateKeys error:", error);
-                alert("Key generation failed: " + error.message);
+                showSimpleModal("Key Generation Failed", error.message);
             }
         }
 
         async function installGeneratedKey(privateKey, publicKey, keyName) {
             const existingData = await getKeyDataFromDb();
 
-            if (existingData.privateKey && !confirm("A private key is already installed. Overwrite it?")) {
+            if (existingData.privateKey) {
+                showConfirmModal(
+                    "Overwrite Installed Key?",
+                    "A private key is already installed. Overwrite it?",
+                    async () => {
+                        await finishInstallGeneratedKey(privateKey, publicKey, keyName);
+                    }
+                );
                 return;
             }
 
+            await finishInstallGeneratedKey(privateKey, publicKey, keyName);
+        }
+
+        async function finishInstallGeneratedKey(privateKey, publicKey, keyName) {
             await saveKeyDataToDb(privateKey, keyName, publicKey);
             localStorage.setItem("privateKeyName", keyName);
 
-            alert(`Key pair installed as "${keyName}".`);
             await checkStoredKey();
 
-            if (confirm("Send an approval request for this public key now?")) {
-                await sendApprovalRequestFromStoredKey();
-            }
+            showConfirmModal(
+                "Key Installed",
+                `Key pair installed as "${keyName}". Send an approval request for this public key now?`,
+                async () => {
+                    await sendApprovalRequestFromStoredKey();
+                }
+            );
         }
 
         async function saveDeviceKey() {
@@ -870,31 +1027,59 @@ define('SIGNATURES_VERSION', '1.01.0011');
             await sendApprovalRequestWithKey(keyName, publicKey);
         }
 
+        let pendingApprovalKeyName = "";
+        let pendingApprovalPublicKey = "";
+
         async function sendApprovalRequestWithKey(keyName, publicKey) {
-            const approvalEmail = prompt("Enter approval email. Leave blank for env/default/manual instructions:", "");
+            pendingApprovalKeyName = keyName;
+            pendingApprovalPublicKey = publicKey;
+            document.getElementById("mailModalOverlay").style.display = "flex";
+        }
+
+        function closeMailApprovalModal() {
+            document.getElementById("mailModalOverlay").style.display = "none";
+        }
+
+        async function submitMailApprovalModal() {
+            const approvalEmail = document.getElementById("mailRecipient").value.trim();
+            const smtpUsername = document.getElementById("mailSender").value.trim();
+            const smtpPassword = document.getElementById("mailPassword").value.trim();
 
             const body = new URLSearchParams();
-            body.append("key_name", keyName);
-            body.append("public_key", publicKey);
-            body.append("approval_email", approvalEmail || "");
+            body.append("key_name", pendingApprovalKeyName);
+            body.append("public_key", pendingApprovalPublicKey);
+            body.append("approval_email", approvalEmail);
+            body.append("smtp_username", smtpUsername);
+            body.append("smtp_password", smtpPassword);
+
+            const response = await fetch("api/sendApprovalEmail.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body
+            });
+
+            const rawText = await response.text();
+            let result;
 
             try {
-                const response = await fetch("api/sendApprovalEmail.php", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body
-                });
+                result = JSON.parse(rawText);
+            } catch {
+                showSimpleModal("Approval Email Failed", rawText);
+                return;
+            }
 
-                const rawText = await response.text();
+            showSimpleModal(
+                result.status === "success" ? "Approval Email Sent" : "Approval Email Failed",
+                "Status: " + (result.status || "") +
+                "\nMessage: " + (result.message || "") +
+                "\nDiagnostic: " + (result.diagnostic || "") +
+                (result.approval_email ? "\nRecipient: " + result.approval_email : "") +
+                (result.smtp_host ? "\nSMTP Host: " + result.smtp_host : "") +
+                (result.smtp_port ? "\nSMTP Port: " + result.smtp_port : "")
+            );
 
-                try {
-                    const result = JSON.parse(rawText);
-                    alert(result.message || "Approval request processed.");
-                } catch {
-                    alert("Approval request returned non-JSON response:\n\n" + rawText);
-                }
-            } catch (error) {
-                alert("Approval request failed: " + error.message);
+            if (result.status === "success") {
+                closeMailApprovalModal();
             }
         }
 
