@@ -1,6 +1,51 @@
 // authSystem_passwordUtils_clean.js
-// Clean standalone BWCS auth helper.
+// Clean standalone auth helper.
 // Core: IndexedDB private key storage, challenge signing, login, refresh, token validation, and small UI helpers.
+const BW_AUTH_DEFAULT_BASE_PATH = "/auth";
+
+let bwAuthPackageConfig = null;
+
+async function loadBwAuthPackageConfig() {
+  if (bwAuthPackageConfig) return bwAuthPackageConfig;
+
+  const defaultConfig = {
+    basePath: BW_AUTH_DEFAULT_BASE_PATH,
+  };
+
+  try {
+    const res = await fetch(
+      BW_AUTH_DEFAULT_BASE_PATH + "/config.json?v=" + Date.now(),
+    );
+
+    if (res.ok) {
+      const config = await res.json();
+
+      bwAuthPackageConfig = {
+        basePath: config.basePath || BW_AUTH_DEFAULT_BASE_PATH,
+      };
+
+      console.log("Auth config loaded:", bwAuthPackageConfig);
+      return bwAuthPackageConfig;
+    }
+
+    console.log("Auth config not found. Using default auth config.");
+  } catch (e) {
+    console.log("Auth config load skipped. Using default auth config.");
+  }
+
+  bwAuthPackageConfig = defaultConfig;
+  return bwAuthPackageConfig;
+}
+
+async function getBwAuthApiUrl(fileName) {
+  const config = await loadBwAuthPackageConfig();
+  const basePath = String(config.basePath || BW_AUTH_DEFAULT_BASE_PATH).replace(
+    /\/$/,
+    "",
+  );
+
+  return basePath + "/api/" + fileName;
+}
 
 console.log("auth utilities loading...");
 
@@ -17,10 +62,10 @@ const BW_AUTH_CONFIG = {
   passwordCacheRecordKey: "encryptedCachedPasswordPackage",
   passwordAesKeyRecordKey: "passwordCacheAesKey",
   endpoints: {
-    challenge: "api/getChallenge.php",
-    authenticate: "api/authenticate.php",
-    refresh: "api/refreshToken.php",
-    validate: "api/validateToken.php",
+    challenge: "getChallenge.php",
+    authenticate: "authenticate.php",
+    refresh: "refreshToken.php",
+    validate: "validateToken.php",
   },
 };
 
@@ -407,11 +452,14 @@ async function fetchChallenge(deviceName) {
   });
 
   try {
-    const response = await fetch(BW_AUTH_CONFIG.endpoints.challenge, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ device: deviceName }),
-    });
+    const response = await fetch(
+      await getBwAuthApiUrl(BW_AUTH_CONFIG.endpoints.challenge),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ device: deviceName }),
+      },
+    );
 
     const resultText = await response.text();
 
@@ -506,11 +554,14 @@ async function refreshAccessToken() {
     }
 
     try {
-      const response = await fetch(BW_AUTH_CONFIG.endpoints.refresh, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken, device: deviceName }),
-      });
+      const response = await fetch(
+        await getBwAuthApiUrl(BW_AUTH_CONFIG.endpoints.refresh),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken, device: deviceName }),
+        },
+      );
 
       const rawText = await response.text();
       let result;
@@ -587,11 +638,14 @@ async function validateToken(token) {
       tokenLength: token ? token.length : 0,
     });
 
-    const response = await fetch(BW_AUTH_CONFIG.endpoints.validate, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
+    const response = await fetch(
+      await getBwAuthApiUrl(BW_AUTH_CONFIG.endpoints.validate),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      },
+    );
 
     const rawText = await response.text();
 
@@ -711,11 +765,14 @@ async function submitPassword() {
   });
 
   try {
-    const response = await fetch(BW_AUTH_CONFIG.endpoints.authenticate, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      await getBwAuthApiUrl(BW_AUTH_CONFIG.endpoints.authenticate),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+    );
 
     const resultText = (await response.text()).trim();
 
